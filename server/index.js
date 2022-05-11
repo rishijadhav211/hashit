@@ -35,12 +35,22 @@ const Patient = require("./models/patient");
 const auth = require("./MiddleWare/adminAuth");
 const ambAuth = require("./MiddleWare/ambAuth");
 
-/*********  AWS CONFIGURATION FOR EMAIL  **********/
-var AWS = require('aws-sdk');
-// const { findOneAndUpdate } = require("../models/userSchema");
-AWS.config.update({region: process.env.AWS_REGION});
-const ses = new AWS.SES({region: process.env.AWS_REGION});
+/***********  GOOGLE API FOR EMAIL  ***********/
 
+const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+const oAuth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI
+);
+
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 /*********  REGISTER ROUTES   *********/
 
@@ -197,9 +207,30 @@ app.patch("/fPassAdmin", async (req, res) => {
       return res.status(400).json({ message: "Error occured" });
     }
 
-    var message = "Your new Password is :"+password;
-    var name= "Placement Assist";
-    mail(email,"placementapp1234@gmail.com",message,name);    
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "placementapp1234@gmail.com",
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+    const mailOptions = {
+      from: "Ambulance Aggregator @ SAHAJ HACKATHON",
+      to: email,
+      subject: "PASSWORD CHANGED SUCCESSFULLY\n",
+      text: "Your New Password is:"+OTP ,
+    };
+    const result = await transport.sendMail(mailOptions);
+    if (result) {
+      return res.status(201).json({ message: "Mail Sent Success" });
+    } else {
+      return res.status(500).json({ message: "Falied to send" });
+    }
 
   } catch (error) {
     console.log(error);
@@ -254,13 +285,36 @@ app.patch("/fPassAmbulance", async (req, res) => {
       password: password,
     };
     const success = await Ambulance.findOneAndUpdate(filter, update);
+
     if (!success) {
       return res.status(400).json({ message: "Error occured" });
     }
 
-    var message = "Your new Password is :"+password;
-    var name= "Placement Assist";
-    mail(email,"placementapp1234@gmail.com",message,name);    
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "placementapp1234@gmail.com",
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+    const mailOptions = {
+      from: "Ambulance Aggregator @ SAHAJ HACKATHON",
+      to: email,
+      subject: "PASSWORD CHANGED SUCCESSFULLY\n",
+      text: "Your New Password is:"+OTP ,
+    };
+    const result = await transport.sendMail(mailOptions);
+    if (result) {
+      return res.status(201).json({ message: "Mail Sent Success" });
+    } else {
+      return res.status(500).json({ message: "Falied to send" });
+    }
+
 
   } catch (error) {
     console.log(error);
