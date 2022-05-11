@@ -1,7 +1,9 @@
 import React from "react";
-import Home from "./pages/Home";
-import Admin from "./pages/Admin";
-import Ambulance from "./pages/Ambulance/Home";
+import Home from "./Home";
+import Admin from "./Admin/Home";
+import Ambulance from "./Ambulance/Home";
+import {BrowserRouter as Router, Route, Switch, NavLink } from 'react-router-dom';
+
 
 function App() {
   return (
