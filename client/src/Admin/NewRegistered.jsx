@@ -13,31 +13,66 @@ import {
 import Axios from "axios";
 function NewRegistered() {
     const [lefttabtext, setLefttabtext] = React.useState("");
-    const [registerAmb,setregisterAmb]= React.useState([1,2,3,4,5]);
+    const [registerAmb,setregisterAmb]= React.useState([1,2,3,3]);
+    const [showdelete,setShowdelete]=React.useState(false);
+    const [currentdelamb,setcurrentdelamb]=React.useState("");
+    const [showverified,setshowverified]=React.useState(false);
 
     React.useEffect(() => {
 
-
-        Axios.get("http://localhost:3002/getalladmin")
-            .then(function (response) {
-                // const res = response.data[0];
-                if (response.status == 201) {
-                    setregisterAmb(response.data.users);
-                } else {
-                    setLefttabtext("Data not found");
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-                setLefttabtext("Data not found");
-            })
-            .catch(function (error) {
-                console.log(error);
-                setLefttabtext("Data not found");
-            });
+        Axios.get("http://localhost:3002/adminAmb")
+        .then(function (response) {
+          if (response.status == 201) {
+            console.log(response.data);
+            //set data
+          } else {
+            console.log("error fetching user info");
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+        
 
     }, []);
 
+
+   function  handleShowforverify(currentindex, ID){
+   
+    Axios.patch("http://localhost:3002/verifyAmb", {
+        ambID:ID
+    }).then((response) => {
+      console.log(response);
+      if (response.status == 201) {
+        setshowverified(true);
+        const copyPostArray = Object.assign([],registerAmb);
+        copyPostArray.splice(currentindex, 1);
+        setregisterAmb(copyPostArray);
+      } else {
+        console.log("error ");
+      }
+        
+    }).catch(function (error) {
+        console.log(error);
+      });
+
+   }
+
+   function handleShowfordecline(currentindex,ID,ambno){
+    Axios.delete("http://localhost:3002/rejectAmb", {
+        ambID: ID
+    }).then((response) => {
+        console.log(response);
+          setShowdelete(true);
+          setcurrentdelamb(ambno);
+          const copyPostArray = Object.assign([],registerAmb );
+          copyPostArray.splice(currentindex, 1);
+          setregisterAmb(copyPostArray);
+      }).catch(function (error) {
+          console.log(error);
+        });
+   }
+   
     function renderAmb(data) {
         let items = [];
 
@@ -51,31 +86,40 @@ function NewRegistered() {
                   <Card.Body>
                     <Row style={{ marginLeft: "20px", marginRight: "20px" }}>
                       <Col style={{ color: "grey" }}>
-                        <i>Username:</i>
+                        <i>Name:</i>
                       </Col>
                     </Row>
     
                     <Row style={{ marginLeft: "20px", marginRight: "20px" }}>
-                      {/* <Col>{item.username}</Col> */}
+                      <Col>{item.name}</Col>
                     </Row>
     
                     <Row style={{ marginLeft: "20px", marginRight: "20px" }}>
                       <Col style={{ color: "grey" }}>
-                        <i>Email:</i>
+                        <i>Address:</i>
                       </Col>
                     </Row>
     
                     <Row style={{ marginLeft: "20px", marginRight: "20px" }}>
-                      {/* <Col>{item.email}</Col> */}
+                      <Col>{item.address}</Col>
                     </Row>
     
                     <Row style={{ marginLeft: "20px", marginRight: "20px" }}>
                       <Col style={{ color: "grey" }}>
-                        <i>Department:</i>
+                        <i>Ambulance Number:</i>
                       </Col>
                     </Row>
                     <Row style={{ marginLeft: "20px", marginRight: "20px" }}>
-                      <Col>{item.deptID}</Col>
+                      <Col>{item.ambNo}</Col>
+                    </Row>
+
+                    <Row style={{ marginLeft: "20px", marginRight: "20px" }}>
+                      <Col style={{ color: "grey" }}>
+                        <i>Mobile Number:</i>
+                      </Col>
+                    </Row>
+                    <Row style={{ marginLeft: "20px", marginRight: "20px" }}>
+                      <Col>{item.mobileNo}</Col>
                     </Row>
     
                     <Row
@@ -85,7 +129,7 @@ function NewRegistered() {
                     <Col>
                       <Button
                         variant="danger"
-                        // onClick={() => handleShow(index, item.username, item.email)}
+                         onClick={() => handleShowfordecline(index, item.ambID,item.ambNo)}
                       >
                         Decline
                       </Button>
@@ -93,7 +137,7 @@ function NewRegistered() {
                       <Col>
                       <Button
                         variant="primary"
-                        // onClick={() => handleShow(index, item.username, item.email)}
+                         onClick={() => handleShowforverify(index, item.ambID,)}
                       >
                         Verify
                       </Button>
@@ -108,9 +152,37 @@ function NewRegistered() {
         return items;
     }
 
+    const handleClosedecline = () => {
+        setShowdelete(false);
+      };
 
     return (
         <>
+        <Modal show={showdelete} onHide={handleClosedecline}>
+        <Modal.Header closeButton>
+          {/* <Modal.Title>Alert!</Modal.Title> */}
+        </Modal.Header>
+        <Modal.Body>
+          Request Declined for: {" "+currentdelamb}
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+
+      <Modal show={showverified} onHide={()=>setshowverified(false)}>
+        <Modal.Header closeButton>
+          {/* <Modal.Title>Alert!</Modal.Title> */}
+        </Modal.Header>
+        <Modal.Body>
+          Ambulance Verified!
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+
+
+<br>
+    
+</br>
+
             <Container>
                 <Row md={3}>{renderAmb(registerAmb)}</Row>
             </Container>

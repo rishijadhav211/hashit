@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
-
+import Axios from "axios";
+import { Redirect, useHistory } from "react-router-dom";
 import {
   Form,
   Navbar,
@@ -12,36 +13,65 @@ import {
   Nav,
 } from "react-bootstrap";
 
+
 function Home() {
   const [text, settext] = useState("");
   const [Resmsg, setResmsg] = React.useState(null);
   const [validated, setValidated] = React.useState(false);
   const [key, setKey] = React.useState("Search");
   const [mailplaceholder, setmailplaceholder] = useState("Password");
+  const [email,setEmail]= React.useState("");
+  const [pass,setPass]=React.useState("");
+  const [redirect,setRedirect]=React.useState(false);
 
+
+
+  const [uname,setuname]=React.useState("");
+  const [rate,setRate]=React.useState(0);
+  
+
+  Axios.defaults.withCredentials = true;
   function resetPass() {}
   function resetform() {
     setResmsg(null);
     setValidated(false);
     document.getElementById("addassetform").reset();
   }
-  function handleLogin(e) {}
+  const history=useHistory();
+  
+  if (redirect) {
+    return <Redirect to='/admin'></Redirect>
+  }
+  function handleLogin(e) {
+   
+    console.log("clicked")
+    settext(null);
+   e.preventDefault(e);
+    if (email && pass) {
+
+      
+      Axios.post("http://localhost:3002/adminLogin", {
+        email: email,
+        password: pass,
+        withCredentials: true,
+      }).then((response) => {
+        console.log(response);
+        if (response.status === 201) {
+          setRedirect(true);
+        } else if (response.status === 231) {
+          settext(response);
+        }
+      });
+    } else if (email) {
+      settext("Enter Password! ");
+    } 
+
+  }
+
+
   async function handleSubmit(event) {}
   return (
     <>
-<<<<<<< HEAD
-      <Navbar bg="dark" variant="dark">
-    <Container>
-    <Nav className="me-auto">
-      <Nav.Link href="#home">Home</Nav.Link>
-      <Nav.Link href="#features">Features</Nav.Link>
-      <Nav.Link href="#pricing">Pricing</Nav.Link>
-    </Nav>
-    homeeeeeeee
-    </Container>
-
-  </Navbar>
-=======
       <div style={{ backroundColor: "#6A67CE", textAlign: "center" }}>
         <h1>Ambulance Agrgator</h1>
       </div>
@@ -274,7 +304,7 @@ function Home() {
                 <input
                   spellCheck={false}
                   type="email"
-                  // onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="email"
                   placeholder="Email"
                 />
@@ -282,7 +312,7 @@ function Home() {
                 <input
                   type="password"
                   className="password"
-                  // onChange={(e) => setPass(e.target.value)}
+                  onChange={(e) => setPass(e.target.value)}
                   placeholder={mailplaceholder}
                 />
                 <br />
@@ -348,7 +378,6 @@ function Home() {
       <Row>
         <Col>3 of 1</Col>
       </Row> */}
->>>>>>> 1e3bc73421881abbec12f46110d04e07ed129671
     </>
   );
 }

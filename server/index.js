@@ -295,12 +295,13 @@ app.patch("/changePAmbulnace", auth, async (req, res) => {
 /**********  ADMIN FUNCTIONALITY  *********/
 
 app.get("/adminAmb",async(req,res)=>{
-  const adminID = req.userID;
+  const adminID = "627c20e9e64208839f420ecc";
   try{
     const admin = Admin.findOne({_id: adminID});
     const pinCode = admin.pinCode;
     const ambulance = Ambulance.find({isValid: false, pinCode: pinCode});
-    res.send(ambulance);
+    console.log(ambulance)
+    res.json(ambulance);
   }
   catch(err){
     console.log(err);
@@ -321,7 +322,7 @@ app.patch("/verifyAmb",async(req,res)=>{
     if (success) {
       res.status(201).json({ message: "Verified Success" });
     } else {
-      return res.status(400).json({ message: "Data not fo   und" });
+      return res.status(400).json({ message: "Data not found" });
     }
   }
   catch(err){
