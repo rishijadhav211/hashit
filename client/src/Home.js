@@ -38,23 +38,37 @@ function Home() {
 
   console.log(pincode);
 
-  useEffect(() => {
-    axios.get("http://localhost:3001/api/users/login/notify",{
-      pinCode: pincode
-    }).then((response) => {
-      console.log(response.data);
-      setamb(response.data.data)
 
-
-
-    });
-  }, [])
   function handle(e) {
     const newdata = { ...pincode };
     newdata[e.target.id] = e.target.value;
     setPinCode(newdata);
     // console.log(newdata);
 }
+
+const searchAmbulance = (e) => {
+
+  e.preventDefault();
+
+  console.log("in search")
+
+  axios.get("http://localhost:3002/getAmbulance", {
+      pinCode: pincode,
+     
+  })
+      .then(res => {
+          if (res.status === 200) {
+              window.alert("Form set Successfully!!")
+              setPinCode(res.data);
+          }
+      })
+      .catch(error => {
+          console.log(error);
+          window.alert("Theres Some Error")
+      })
+}
+
+
 
   return (
     <>
@@ -77,12 +91,12 @@ function Home() {
                   <Form.Control style ={{"width" : "500px"}} id="pincode" onChange={(e) => handle(e)} name="name" placeholder="Enter Pin Code" />
                 </Col>
                 <Col>
-                <Button style={{"marginLeft": "-200px"}} className="formFieldButton hanldeForm">Search Ambulances</Button>
+                <Button style={{"marginLeft": "-200px"}}  onClick={(e) => searchAmbulance(e)} className="formFieldButton hanldeForm">Search Ambulances</Button>
 
                 </Col>
               </Row>
             </Form>
-            {/* {amb.map(amb => (
+            {amb.map(amb => (
            <div className="row">
              <div className="column">
                <div className="mard">
@@ -98,25 +112,8 @@ function Home() {
              </div>
            </div>
          </div>
-       ))} */}
-            <div className="row">
-              <div className="column">
-                <div className="mard">
-                  <div>
-                    <Card.Body>
-                      <Card.Title style={{ "textAlign": "center" }}>Ambulance No: </Card.Title>
-                      <Card.Text style={{ "textAlign": "center" }}>Provider Name:  </Card.Text>
-                      <Card.Text style={{ "textAlign": "center" }}>Current Location:  </Card.Text>
-                      <Card.Text style={{ "textAlign": "center" }}>Phone No: </Card.Text>
-                      {/* <Card.Text style={{"textAlign":"center"}}>Patient Phone No: </Card.Text> */}
-
-                    </Card.Body>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
+       ))}
+           
           </Tab>
           <Tab eventKey="Search" title=" Register Ambulance">
             <Row style={{ margin: 0, padding: 0 }}>
