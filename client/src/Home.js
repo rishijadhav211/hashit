@@ -1,5 +1,9 @@
 import React from "react";
 import { useState } from "react";
+import axios from 'axios';
+import { NavDropdown, Button } from 'react-bootstrap';
+import { useHistory, withRouter } from "react-router-dom";
+import { useEffect } from 'react';
 
 import {
   Form,
@@ -8,6 +12,7 @@ import {
   Tab,
   Row,
   Col,
+  Card,
   Container,
   Nav,
 } from "react-bootstrap";
@@ -19,18 +24,42 @@ function Home() {
   const [key, setKey] = React.useState("Search");
   const [mailplaceholder, setmailplaceholder] = useState("Password");
 
-  function resetPass() {}
+  function resetPass() { }
   function resetform() {
     setResmsg(null);
     setValidated(false);
     document.getElementById("addassetform").reset();
   }
-  function handleLogin(e) {}
-  async function handleSubmit(event) {}
+  function handleLogin(e) { }
+  async function handleSubmit(event) { }
+
+  const [amb, setamb] = useState([]);
+  const[pincode, setPinCode] = useState("");
+
+  console.log(pincode);
+
+  useEffect(() => {
+    axios.get("http://localhost:3001/api/users/login/notify",{
+      pinCode: pincode
+    }).then((response) => {
+      console.log(response.data);
+      setamb(response.data.data)
+
+
+
+    });
+  }, [])
+  function handle(e) {
+    const newdata = { ...pincode };
+    newdata[e.target.id] = e.target.value;
+    setPinCode(newdata);
+    // console.log(newdata);
+}
+
   return (
     <>
-      <div style={{ textAlign: "center", height: "75px"}}>
-        <h1 style={{ backgroundColor: "#6c9bc8", height: "75px"}}>Ambulance Aggregator</h1>
+      <div style={{ textAlign: "center", height: "75px" }}>
+        <h1 style={{ backgroundColor: "#6c9bc8", height: "75px" }}>Ambulance Aggregator</h1>
       </div>
 
       <div style={{ margin: "30px" }}>
@@ -40,7 +69,55 @@ function Home() {
           onSelect={(k) => setKey(k)}
           className="mb-3"
         >
-          <Tab eventKey="Login" title="Request Ambulance"></Tab>
+          <Tab eventKey="Login" title="Request Ambulance">
+
+            <Form>
+              <Row>
+                <Col>
+                  <Form.Control style ={{"width" : "500px"}} id="pincode" onChange={(e) => handle(e)} name="name" placeholder="Enter Pin Code" />
+                </Col>
+                <Col>
+                <Button style={{"marginLeft": "-200px"}} className="formFieldButton hanldeForm">Search Ambulances</Button>
+
+                </Col>
+              </Row>
+            </Form>
+            {/* {amb.map(amb => (
+           <div className="row">
+             <div className="column">
+               <div className="mard">
+                 <div>
+                   <Card.Body>
+                     <Card.Title>Ambulance No: </Card.Title>
+                     <Card.Subtitle className="">:  </Card.Subtitle>
+                     <Card.Text>Source:  </Card.Text>
+                     <Card.Text>Destination: </Card.Text>
+
+                 </Card.Body>
+               </div>
+             </div>
+           </div>
+         </div>
+       ))} */}
+            <div className="row">
+              <div className="column">
+                <div className="mard">
+                  <div>
+                    <Card.Body>
+                      <Card.Title style={{ "textAlign": "center" }}>Ambulance No: </Card.Title>
+                      <Card.Text style={{ "textAlign": "center" }}>Provider Name:  </Card.Text>
+                      <Card.Text style={{ "textAlign": "center" }}>Current Location:  </Card.Text>
+                      <Card.Text style={{ "textAlign": "center" }}>Phone No: </Card.Text>
+                      {/* <Card.Text style={{"textAlign":"center"}}>Patient Phone No: </Card.Text> */}
+
+                    </Card.Body>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </Tab>
           <Tab eventKey="Search" title=" Register Ambulance">
             <Row style={{ margin: 0, padding: 0 }}>
               <h3
@@ -76,7 +153,7 @@ function Home() {
                           required
                           type="text"
                           placeholder="Name"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
 
@@ -90,7 +167,7 @@ function Home() {
                           required
                           type="email"
                           placeholder="Email"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -107,7 +184,7 @@ function Home() {
                           required
                           type="number"
                           placeholder="Rate"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
 
@@ -121,7 +198,7 @@ function Home() {
                           required
                           type="number"
                           placeholder="Mobile Number"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -141,7 +218,7 @@ function Home() {
                           required
                           type="text"
                           placeholder="Ambulance No"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
 
@@ -155,7 +232,7 @@ function Home() {
                           required
                           type="text"
                           placeholder="Address"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -172,7 +249,7 @@ function Home() {
                           required
                           type="City"
                           placeholder="City"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
 
@@ -186,7 +263,7 @@ function Home() {
                           required
                           type="number"
                           placeholder="Pincode"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -206,7 +283,7 @@ function Home() {
                           required
                           type="password"
                           placeholder="PAssword"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -223,7 +300,7 @@ function Home() {
                           required
                           type="password"
                           placeholder="Confirm Password"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
