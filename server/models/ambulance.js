@@ -10,7 +10,7 @@ const ambulanceSchema = new mongoose.Schema({
         required: true, 
     },
     rate:{
-        type: Int16Array,
+        type: Intl,
         required:true,
     },
     mobileNo: {
@@ -30,7 +30,7 @@ const ambulanceSchema = new mongoose.Schema({
         required: true,
     },
     pinCode: {
-        type: Int16Array,
+        type: Intl,
         required: true,
     },
     status:{
@@ -74,5 +74,5 @@ ambulanceSchema.methods.generateAuthToken = async function () {
     }
   };
 
-const Ambulance = mongoose.model("Ambulance",ambulanceSchema);
+const Ambulance =new mongoose.model("Ambulance",ambulanceSchema);
 module.exports = Ambulance;

@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const Ambulance = require("../models/ambulance");
-const User = require("../models/User");
 require("cookie-parser");
 
 const UserAuth = async (req, res, next) => {

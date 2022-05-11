@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const adminSchema = new mongooseSchema({
+const adminSchema = new mongoose.Schema({
     name:{
         type:String,
         required: true,
@@ -19,7 +19,7 @@ const adminSchema = new mongooseSchema({
     },
     token:{
         type: String,
-    }
+    },
 });
 
 adminSchema.pre("save", async function (next) {
@@ -46,5 +46,5 @@ adminSchema.methods.generateAuthToken = async function () {
     }
   };
 
-const Admin = mongoose.model("Admin",adminSchema);
+const Admin =new mongoose.model("Admin",adminSchema);
 module.exports = Admin;

@@ -32,12 +32,12 @@ const Ambulance = require("./models/ambulance");
 const Admin = require("./models/Admin");
 const Booking = require("./models/booking");
 const Patient = require("./models/patient");
-const adminAuth = require("./MiddleWare/adminAuth");
+const auth = require("./MiddleWare/adminAuth");
 const ambAuth = require("./MiddleWare/ambAuth");
 
 /*********  AWS CONFIGURATION FOR EMAIL  **********/
 var AWS = require('aws-sdk');
-const { findOneAndUpdate } = require("../models/userSchema");
+// const { findOneAndUpdate } = require("../models/userSchema");
 AWS.config.update({region: process.env.AWS_REGION});
 const ses = new AWS.SES({region: process.env.AWS_REGION});
 
@@ -170,7 +170,7 @@ app.get("/adminLogout",async(req,res)=>{
 
 /***********  CHANGE PASSWORD   ***********/
 
-router.patch("/fPassAdmin", async (req, res) => {
+app.patch("/fPassAdmin", async (req, res) => {
   try {
     const admin = await Admin.findOne({name: req.body.email});
     const adminID= Admin._id;
@@ -205,7 +205,7 @@ router.patch("/fPassAdmin", async (req, res) => {
   }
 });
 
-router.patch("/changePAdmin", auth, async (req, res) => {
+app.patch("/changePAdmin", auth, async (req, res) => {
   try {
     const user = await Admin.findOne({ _id: req.userID });
     const email = user.email;
@@ -231,7 +231,7 @@ router.patch("/changePAdmin", auth, async (req, res) => {
   }
 });
 
-router.patch("/fPassAmbulance", async (req, res) => {
+app.patch("/fPassAmbulance", async (req, res) => {
   try {
     const amb = await Ambulance.findOne({name: req.body.email});
     const ambID= amb._id;
@@ -266,7 +266,7 @@ router.patch("/fPassAmbulance", async (req, res) => {
   }
 });
 
-router.patch("/changePAmbulnace", auth, async (req, res) => {
+app.patch("/changePAmbulnace", auth, async (req, res) => {
   try {
     const user = await Ambulance.findOne({ _id: req.userID });
     const email = user.email;
@@ -390,7 +390,7 @@ app.patch("/updateAdmin",async(req,res)=>{
 });
 
 /********  AMBULANCE FUNCTIONALITY  *********/
-app.get("/ambulanceProfile" , async(req,res)=>{
+app.get("/ambulanceProfile" ,ambAuth,async(req,res)=>{
   const ambID = req.userID;
   try{
     const profile = await Ambulance.findOne({_id: ambID});
@@ -405,7 +405,7 @@ app.get("/ambulanceProfile" , async(req,res)=>{
   }
 });
 
-app.patch("/updateAmbulance",async(req,res)=>{
+app.patch("/updateAmbulance",ambAuth,async(req,res)=>{
   const id= req.userID;
   const {name,email,pinCode,rate,mobileNo,ambNo,address,city} = req.body;
   try{
@@ -480,54 +480,6 @@ app.post("/request",async(req,res)=>{
   }
 });
 
-
-//FUNCTION TO SEND EMAIL
-
-function mail(to,from,msg,name){
-  var params={
-    Destination: { /* required */
-      ToAddresses: [to]
-    },
-
-    Message: { /* required */
-      Body: { /* required */
-        Text: {
-          Charset: "UTF-8",
-          Data: "From :"+ name + "\n" + msg,
-        }
-      },
-      Subject: {
-        Charset: 'UTF-8',
-        Data: "Email from: "+from
-      }
-    },
-
-    Source: 'placementapp1234@gmail.com',
-  }
-
-  try {
-    var sendPromise = new AWS.SES({
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_KEY,
-      apiVersion: "2010-12-01",
-    })
-      .sendEmail(params)
-      .promise();
-
-    // Handle promise's fulfilled/rejected states
-    sendPromise
-      .then(function (data) {
-        console.log("Success mail");
-
-      })
-      .catch(function (err) {
-        console.log("Error sendin mail");
-        console.error(err, err.stack);
-      });
-  } catch (e) {
-    console.log(e);
-  }
-}
 
 app.listen(process.env.PORT || port, () => {
   console.log(`Example app listening on port ${port}!`);
