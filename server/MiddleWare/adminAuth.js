@@ -5,7 +5,7 @@ require('cookie-parser');
 const adminAuth =async (req,res,next) => {
     try{
         const token= req.cookies.adminLogin;
-        const verify= jwt.verify(token,process.env.ADMIN_TOKEN_CODE);
+        const verify= jwt.verify(token,process.env.TOKEN_CODE);
         
         const rootUser = admin.findOne({_id: verify._id,"tokens.token":token});
         if(!rootUser){
