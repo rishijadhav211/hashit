@@ -349,16 +349,12 @@ app.patch("/changePAmbulnace", async (req, res) => {
 
 /**********  ADMIN FUNCTIONALITY  *********/
 
-app.get("/adminAmb",async(req,res)=>{
-  const adminID = "627c20e9e64208839f420ecc";
+app.get("/adminAmb",adminAuth,async(req,res)=>{
+  const adminID = req.userID;
   try{
-    console.log("HIIIIIIIIIIIIIIIIIIIIIII");
     const admin = Admin.findOne({_id: adminID});
     const pinCode = admin.pinCode;
-    const ambulance = Ambulance.find({});
-
-    console.log("HIIIIIIIIIIIIIIIIIIIIIII");
-
+    const ambulance = await Ambulance.find({isValid:false, pinCode:pinCode});
     res.send(ambulance);
   }
   catch(err){

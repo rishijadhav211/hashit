@@ -2,6 +2,11 @@ import React from "react";
 import { useState } from "react";
 import Axios from "axios";
 import { Redirect, useHistory } from "react-router-dom";
+import axios from 'axios';
+import { NavDropdown, Button } from 'react-bootstrap';
+import {  withRouter } from "react-router-dom";
+import { useEffect } from 'react';
+
 import {
   Form,
   Navbar,
@@ -9,6 +14,7 @@ import {
   Tab,
   Row,
   Col,
+  Card,
   Container,
   Nav,
 } from "react-bootstrap";
@@ -23,7 +29,8 @@ function Home() {
   const [email,setEmail]= React.useState("");
   const [pass,setPass]=React.useState("");
   const [redirect,setRedirect]=React.useState(false);
-
+  const [amb, setamb] = React.useState([]);
+  const[pincode, setPinCode] = React.useState("");
 
 
   const [uname,setuname]=React.useState("");
@@ -31,9 +38,9 @@ function Home() {
   const [useremail,setuseremail]=React.useState("");
   const [usermob,setusermob]=React.useState("");
   const [ambno,setambno]=React.useState("");
-  const [city,setCity]=React.userState("");
+  const [city,setCity]=React.useState("");
   const [address,setadress]=React.useState("");
-  const [pincode,setpincode]=React.useState("");
+  const [userpincode,setuserpincode]=React.useState("");
   const [password,setpassoword]=React.useState("");
   const [confirmpass,setconfirm]=React.useState("");
   
@@ -79,10 +86,49 @@ function Home() {
 
 
   async function handleSubmit(event) {}
+  function handleLogin(e) { }
+  async function handleSubmit(event) { }
+
+  
+
+  console.log(pincode);
+
+
+  function handle(e) {
+    const newdata = { ...pincode };
+    newdata[e.target.id] = e.target.value;
+    setPinCode(newdata);
+    // console.log(newdata);
+}
+
+const searchAmbulance = (e) => {
+
+  e.preventDefault();
+
+  console.log("in search")
+
+  axios.get("http://localhost:3002/getAmbulance", {
+      pinCode: pincode,
+     
+  })
+      .then(res => {
+          if (res.status === 200) {
+              window.alert("Form set Successfully!!")
+              setPinCode(res.data);
+          }
+      })
+      .catch(error => {
+          console.log(error);
+          window.alert("Theres Some Error")
+      })
+}
+
+
+
   return (
     <>
-      <div style={{ textAlign: "center", height: "75px"}}>
-        <h1 style={{ backgroundColor: "#6c9bc8", height: "75px"}}>Ambulance Aggregator</h1>
+      <div style={{ textAlign: "center", height: "75px" }}>
+        <h1 style={{ backgroundColor: "#6c9bc8", height: "75px" }}>Ambulance Aggregator</h1>
       </div>
 
       <div style={{ margin: "30px" }}>
@@ -92,7 +138,38 @@ function Home() {
           onSelect={(k) => setKey(k)}
           className="mb-3"
         >
-          <Tab eventKey="Login" title="Request Ambulance"></Tab>
+          <Tab eventKey="Login" title="Request Ambulance">
+
+            <Form>
+              <Row>
+                <Col>
+                  <Form.Control style ={{"width" : "500px"}} id="pincode" onChange={(e) => handle(e)} name="name" placeholder="Enter Pin Code" />
+                </Col>
+                <Col>
+                <Button style={{"marginLeft": "-200px"}}  onClick={(e) => searchAmbulance(e)} className="formFieldButton hanldeForm">Search Ambulances</Button>
+
+                </Col>
+              </Row>
+            </Form>
+            {amb.map(amb => (
+           <div className="row">
+             <div className="column">
+               <div className="mard">
+                 <div>
+                   <Card.Body>
+                     <Card.Title>Ambulance No: </Card.Title>
+                     <Card.Subtitle className="">:  </Card.Subtitle>
+                     <Card.Text>Source:  </Card.Text>
+                     <Card.Text>Destination: </Card.Text>
+
+                 </Card.Body>
+               </div>
+             </div>
+           </div>
+         </div>
+       ))}
+           
+          </Tab>
           <Tab eventKey="Search" title=" Register Ambulance">
             <Row style={{ margin: 0, padding: 0 }}>
               <h3
@@ -128,7 +205,7 @@ function Home() {
                           required
                           type="text"
                           placeholder="Name"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
 
@@ -142,7 +219,7 @@ function Home() {
                           required
                           type="email"
                           placeholder="Email"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -159,7 +236,7 @@ function Home() {
                           required
                           type="number"
                           placeholder="Rate"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
 
@@ -173,7 +250,7 @@ function Home() {
                           required
                           type="number"
                           placeholder="Mobile Number"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -193,7 +270,7 @@ function Home() {
                           required
                           type="text"
                           placeholder="Ambulance No"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
 
@@ -207,7 +284,7 @@ function Home() {
                           required
                           type="text"
                           placeholder="Address"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -224,7 +301,7 @@ function Home() {
                           required
                           type="City"
                           placeholder="City"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
 
@@ -238,7 +315,7 @@ function Home() {
                           required
                           type="number"
                           placeholder="Pincode"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -258,7 +335,7 @@ function Home() {
                           required
                           type="password"
                           placeholder="PAssword"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>
@@ -275,7 +352,7 @@ function Home() {
                           required
                           type="password"
                           placeholder="Confirm Password"
-                          // onChange={(e) => setMake(e.target.value)}
+                        // onChange={(e) => setMake(e.target.value)}
                         />
                       </Form.Group>
                     </Row>

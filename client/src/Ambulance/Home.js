@@ -7,14 +7,14 @@ import { useHistory, withRouter } from "react-router-dom";
 
 function Home() {
 
-  const [notification, setnotification] = useState([]);
+  const [amb, setamb] = useState([]);
  
   let history = useHistory();
 
   useEffect(() => {
     axios.get("http://localhost:3001/api/users/login/notify").then((response) => {
       console.log(response.data);
-      setnotification(response.data.data)
+      setamb(response.data.data)
 
 
     });
@@ -89,25 +89,41 @@ const handle = (e) => {
 
        {/* ambulance showcase */}
 
-      {/* {
-        amb.map(amb => (
-          <div className="row">
-            <div className="column">
-              <div className="mard">
-                <div>
-                  <Card.Body>
-                    <Card.Title>Ambulance No: {amb.ambNo}</Card.Title>
-                    <Card.Subtitle className="">:  {amb.date}</Card.Subtitle>
-                    <Card.Text>Source: {amb.source} </Card.Text>
-                    <Card.Text>Destination: {amb.destination} </Card.Text>
+      {
+        // amb.map(amb => (
+        //   <div className="row">
+        //     <div className="column">
+        //       <div className="mard">
+        //         <div>
+        //           <Card.Body>
+        //             <Card.Title>Ambulance No: </Card.Title>
+        //             <Card.Subtitle className="">:  </Card.Subtitle>
+        //             <Card.Text>Source:  </Card.Text>
+        //             <Card.Text>Destination: </Card.Text>
 
-                  </Card.Body>
-                </div>
-              </div>
+        //           </Card.Body>
+        //         </div>
+        //       </div>
+        //     </div>
+        //   </div>
+        // ))
+        <div className="row">
+        <div className="column">
+          <div className="mard">
+            <div>
+              <Card.Body>
+                <Card.Title style={{"textAlign":"center"}}>Ambulance No: </Card.Title>
+                <Card.Text style={{"textAlign":"center"}}>Patient Name:  </Card.Text>
+                <Card.Text style={{"textAlign":"center"}}>Source:  </Card.Text>
+                <Card.Text style={{"textAlign":"center"}}>Destination: </Card.Text>
+                <Card.Text style={{"textAlign":"center"}}>Patient Phone No: </Card.Text>
+
+              </Card.Body>
             </div>
           </div>
-        ))
-      } */}
+        </div>
+      </div>
+      }
 
 
 {/* <Route path='/ambulance' component={Ambulance} /> */}
