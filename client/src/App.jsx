@@ -3,6 +3,7 @@ import Home from "./Home";
 import Admin from "./Admin/Home";
 import Ambulance from "./Ambulance/Home";
 import newRegistered from "./Admin/NewRegistered";
+import Dash from "./Ambulance/Dash";
 import {BrowserRouter as Router, Route, Switch, NavLink } from 'react-router-dom';
 
 
@@ -15,7 +16,7 @@ function App() {
         <Switch>
           <Route path="/" exact component={Home}/>
           <Route path="/admin"   component={Admin}/>
-          <Route path="/ambulance"   component={Ambulance}/>
+          <Route path="/ambulance"   component={Dash}/>
         </Switch>
       </div>
     

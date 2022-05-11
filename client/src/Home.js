@@ -72,8 +72,8 @@ function Home() {
   async function handleSubmit(event) {}
   return (
     <>
-      <div style={{ backroundColor: "#6A67CE", textAlign: "center" }}>
-        <h1>Ambulance Agrgator</h1>
+      <div style={{ textAlign: "center", height: "75px"}}>
+        <h1 style={{ backgroundColor: "#6c9bc8", height: "75px"}}>Ambulance Aggregator</h1>
       </div>
 
       <div style={{ margin: "30px" }}>

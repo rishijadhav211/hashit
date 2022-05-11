@@ -29,25 +29,36 @@ const secretAccessKey = process.env.AWS_SECRET_KEY;
 /**********  REQUIRE STATEMENTS  *********/
 
 const Ambulance = require("./models/ambulance");
-const Admin = require("./models/Admin");
+const Admin = require("./models/adminSchema");
 const Booking = require("./models/booking");
 const Patient = require("./models/patient");
-const auth = require("./MiddleWare/adminAuth");
-const ambAuth = require("./MiddleWare/ambAuth");
+const adminAuth = require("./MiddleWare/adminAuth");
+const ambulanceAuth = require("./MiddleWare/ambAuth");
 
-/*********  AWS CONFIGURATION FOR EMAIL  **********/
-var AWS = require('aws-sdk');
-// const { findOneAndUpdate } = require("../models/userSchema");
-AWS.config.update({region: process.env.AWS_REGION});
-const ses = new AWS.SES({region: process.env.AWS_REGION});
+/***********  GOOGLE API FOR EMAIL  ***********/
 
+const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+const oAuth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI
+);
+
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 /*********  REGISTER ROUTES   *********/
 
 app.post("/registerAmb",async(req,res)=>{
   try{
-    const {name,email,rate, mobileNo, ambNo, address, city, pinCode, status, password} = req.body;
+    const {name,email,rate, mobileNo, ambNo, address, city, pinCode, password} = req.body;
     const isValid= false;
+    const status=true;
     const userExist = await Ambulance.findOne({ email: email });
     if (userExist) {
       return res.status(422).json({ error: "User alredy exist" });
@@ -128,7 +139,7 @@ app.post("/adminLogin",async(req,res)=>{
 
       if(isMatch) {
           const token = await userLogin.generateAuthToken();
-          res.cookie("Admin", token, {
+          res.cookie("adminLogin", token, {
             expires: new Date(Date.now() + 51840000),
             httpOnly: true,
           });
@@ -159,8 +170,8 @@ app.get("/ambulanceLogout",async(req,res)=>{
 
 app.get("/adminLogout",async(req,res)=>{
   try{
-    res.cookie("Admin", "", { expires: new Date(1)});
-    res.clearCookie("Admin");
+    res.cookie("AdminCookie", "", { expires: new Date(1)});
+    res.clearCookie("AdminCookie");
     return res.status(201).json({ message: "Success" });
   }
   catch(err){
@@ -196,16 +207,37 @@ app.patch("/fPassAdmin", async (req, res) => {
       return res.status(400).json({ message: "Error occured" });
     }
 
-    var message = "Your new Password is :"+password;
-    var name= "Placement Assist";
-    mail(email,"placementapp1234@gmail.com",message,name);    
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "placementapp1234@gmail.com",
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+    const mailOptions = {
+      from: "Ambulance Aggregator @ SAHAJ HACKATHON",
+      to: email,
+      subject: "PASSWORD CHANGED SUCCESSFULLY\n",
+      text: "Your New Password is:"+OTP ,
+    };
+    const result = await transport.sendMail(mailOptions);
+    if (result) {
+      return res.status(201).json({ message: "Mail Sent Success" });
+    } else {
+      return res.status(500).json({ message: "Falied to send" });
+    }
 
   } catch (error) {
     console.log(error);
   }
 });
 
-app.patch("/changePAdmin", auth, async (req, res) => {
+app.patch("/changePAdmin", async (req, res) => {
   try {
     const user = await Admin.findOne({ _id: req.userID });
     const email = user.email;
@@ -253,20 +285,43 @@ app.patch("/fPassAmbulance", async (req, res) => {
       password: password,
     };
     const success = await Ambulance.findOneAndUpdate(filter, update);
+
     if (!success) {
       return res.status(400).json({ message: "Error occured" });
     }
 
-    var message = "Your new Password is :"+password;
-    var name= "Placement Assist";
-    mail(email,"placementapp1234@gmail.com",message,name);    
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "placementapp1234@gmail.com",
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+    const mailOptions = {
+      from: "Ambulance Aggregator @ SAHAJ HACKATHON",
+      to: email,
+      subject: "PASSWORD CHANGED SUCCESSFULLY\n",
+      text: "Your New Password is:"+OTP ,
+    };
+    const result = await transport.sendMail(mailOptions);
+    if (result) {
+      return res.status(201).json({ message: "Mail Sent Success" });
+    } else {
+      return res.status(500).json({ message: "Falied to send" });
+    }
+
 
   } catch (error) {
     console.log(error);
   }
 });
 
-app.patch("/changePAmbulnace", auth, async (req, res) => {
+app.patch("/changePAmbulnace", async (req, res) => {
   try {
     const user = await Ambulance.findOne({ _id: req.userID });
     const email = user.email;
@@ -297,11 +352,14 @@ app.patch("/changePAmbulnace", auth, async (req, res) => {
 app.get("/adminAmb",async(req,res)=>{
   const adminID = "627c20e9e64208839f420ecc";
   try{
+    console.log("HIIIIIIIIIIIIIIIIIIIIIII");
     const admin = Admin.findOne({_id: adminID});
     const pinCode = admin.pinCode;
-    const ambulance = Ambulance.find({isValid: false, pinCode: pinCode});
-    console.log(ambulance)
-    res.json(ambulance);
+    const ambulance = Ambulance.find({});
+
+    console.log("HIIIIIIIIIIIIIIIIIIIIIII");
+
+    res.send(ambulance);
   }
   catch(err){
     console.log(err);
@@ -391,7 +449,7 @@ app.patch("/updateAdmin",async(req,res)=>{
 });
 
 /********  AMBULANCE FUNCTIONALITY  *********/
-app.get("/ambulanceProfile" ,ambAuth,async(req,res)=>{
+app.get("/ambulanceProfile" ,async(req,res)=>{
   const ambID = req.userID;
   try{
     const profile = await Ambulance.findOne({_id: ambID});
@@ -406,7 +464,7 @@ app.get("/ambulanceProfile" ,ambAuth,async(req,res)=>{
   }
 });
 
-app.patch("/updateAmbulance",ambAuth,async(req,res)=>{
+app.patch("/updateAmbulance",async(req,res)=>{
   const id= req.userID;
   const {name,email,pinCode,rate,mobileNo,ambNo,address,city} = req.body;
   try{
@@ -442,12 +500,10 @@ app.get("/getAmbulance",async(req,res)=>{
   const pinCode = req.body.pinCode;
   try{
     const ambulance = await Ambulance.find({pinCode: pinCode});
-    if(ambulance){
-      res.send(ambulance);
-    }
+    res.send(ambulance);
   }
   catch(err){
-    console.log(err);
+    console.log("506"+err);
   }
 });
 

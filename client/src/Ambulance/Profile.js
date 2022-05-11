@@ -18,7 +18,7 @@ function Profile() {
 
   const history = useHistory();
 
-  const url = "http://localhost:3001/api/admin/login/updateProfile";
+  const url = "http://localhost:3002/updateProfile";
 
 
   const [data, setData] = useState({
@@ -78,7 +78,7 @@ function Profile() {
 
 
   useEffect(() => {
-    axios.get("http://localhost:3001/api/admin/login/ambulanceProfile").then((response) => {
+    axios.get("http://localhost:3002/ambulanceProfile").then((response) => {
       console.log(response.data);
       setProfileData(response.data.data)
 
@@ -93,7 +93,7 @@ function Profile() {
   return (
 
     <>
-    <h1 style={{"marginLeft": "200px", "marginTop": "30px"}}> Profile</h1>
+    <h1 style={{"marginLeft": "350px", "marginTop": "30px"}}> Profile</h1>
         <div className="profform">
           <Form onSubmit={(e) => submit(e)}>
             <Form.Group as={Row} className="mb-3" controlId="email">
