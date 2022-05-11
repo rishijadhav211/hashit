@@ -442,9 +442,7 @@ app.get("/getAmbulance",async(req,res)=>{
   const pinCode = req.body.pinCode;
   try{
     const ambulance = await Ambulance.find({pinCode: pinCode});
-    if(ambulance){
-      res.send(ambulance);
-    }
+    res.send(ambulance);
   }
   catch(err){
     console.log(err);
