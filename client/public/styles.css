@@ -1,0 +1,45 @@
+.lanButton {
+    outline: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 5px 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-right: 10px;
+    font-size: 18px;
+    border: none;
+    background-color: #023d77;
+    color: white;
+    font-weight: bolder;
+    border-radius: 7px;
+  }
+  .lanButton:hover {
+    box-shadow: 0 0 10px #5258c2;
+  }
+
+  .loginText {
+    font-family: Arial, Helvetica, sans-serif;
+    padding-top: 180px;
+    padding-bottom: 30px;
+    font-size: 35px;
+    /* font-size: max(7vh, 30px); */
+    font-weight: bolder;
+    color: #023d77;
+  }
+  .email,
+  .password {
+    border: solid 1.2px #c9ccd5;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: 20px;
+    /* font-size: max(2.2vh, 1.8vw); */
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 5px;
+    width: 300px;
+    box-shadow: transparent;
+    outline: none;
+  }
+  .email:focus,
+  .password:focus {
+    border: 1.2px solid #023d77;
+    box-shadow: 0 0 10px #719ece;
+  }
