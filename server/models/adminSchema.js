@@ -20,7 +20,6 @@ const adminSchema = new mongoose.Schema({
     },
     token:{
         type:String,
-        required: true,
     },
 });
 
@@ -38,7 +37,7 @@ adminSchema.pre("save",async function(next){
 
 adminSchema.methods.generateAuthToken = async function(){
     try{
-        let token = jwt.sign({_id: this._id},process.env.ADMIN_TOKEN_CODE);
+        let token = jwt.sign({_id: this._id},process.env.TOKEN_CODE);
         this.token = token;
         await this.save();
         return token;
