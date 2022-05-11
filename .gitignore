@@ -10,8 +10,8 @@
 
 # production
 /client/build
-/Client/node_modules
-/Server/node_modules
+/client/node_modules
+/server/node_modules
 
 # misc
 .DS_Store
