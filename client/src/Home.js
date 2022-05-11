@@ -29,6 +29,10 @@ function Home() {
   async function handleSubmit(event) {}
   return (
     <>
+      <div style={{ backroundColor: "#6A67CE", textAlign: "center" }}>
+        <h1>Ambulance Agrgator</h1>
+      </div>
+
       <div style={{ margin: "30px" }}>
         <Tabs
           id="controlled-tab-example"
@@ -39,7 +43,7 @@ function Home() {
           <Tab eventKey="Login" title="Request Ambulance"></Tab>
           <Tab eventKey="Search" title=" Register Ambulance">
             <Row style={{ margin: 0, padding: 0 }}>
-              <h1
+              <h3
                 style={{
                   textAlign: "center",
                   paddingLeft: "0",
@@ -48,7 +52,7 @@ function Home() {
                 }}
               >
                 Register Ambulance
-              </h1>
+              </h3>
               <hr style={{ margin: 0, padding: 0 }} />
             </Row>
             <Row>
@@ -243,7 +247,7 @@ function Home() {
             <div style={{ textAlign: "center" }}>
               <form>
                 <Row style={{ margin: 0, padding: 0 }}>
-                  <h1
+                  <h3
                     style={{
                       textAlign: "center",
                       paddingLeft: "0",
@@ -252,7 +256,7 @@ function Home() {
                     }}
                   >
                     Admin Login
-                  </h1>
+                  </h3>
                 </Row>
                 <input
                   spellCheck={false}
@@ -290,7 +294,6 @@ function Home() {
           </Tab>
         </Tabs>
       </div>
-
       {/* <Navbar bg="dark" variant="dark">
         <Container>
           <Nav className="me-auto">
@@ -300,7 +303,6 @@ function Home() {
           </Nav>
         </Container>
       </Navbar> */}
-
       {/* <Row style={{ margin: 0, padding: 0 }}>
         <h1
           style={{
