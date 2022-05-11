@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const Admin = require("../models/admin");
 require("cookie-parser");
 
 const UserAuth = async (req, res, next) => {
   try {
-    const token = req.cookies.ASSETREGISTRY;
+    const token = req.cookies.Admin;
     const verify = jwt.verify(token, process.env.TOKEN_CODE);
-    const rootUser = User.findOne({ email: verify.email, token: token });
+    const rootUser = Admin.findOne({ email: verify.email, token: token });
     if (!rootUser) {
       throw new Error("User not found");
     } else {
