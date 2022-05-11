@@ -352,12 +352,10 @@ app.patch("/changePAmbulnace", async (req, res) => {
 app.get("/adminAmb",async(req,res)=>{
   const adminID = req.userID;
   try{
-    console.log("HIIIIIIIIIIIIIIIIIIIIIII");
     const admin = Admin.findOne({_id: adminID});
     const pinCode = admin.pinCode;
     const ambulance = Ambulance.find({});
 
-    console.log("HIIIIIIIIIIIIIIIIIIIIIII");
 
     res.send(ambulance);
   }
