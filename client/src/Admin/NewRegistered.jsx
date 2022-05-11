@@ -81,7 +81,7 @@ function NewRegistered() {
               <Col>
                 <Card
                   style={{ width: "20rem", margin: "10px" }}
-                //   key={index + item.username}
+                 key={index + item.username}
                 >
                   <Card.Body>
                     <Row style={{ marginLeft: "20px", marginRight: "20px" }}>

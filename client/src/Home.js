@@ -28,7 +28,16 @@ function Home() {
 
   const [uname,setuname]=React.useState("");
   const [rate,setRate]=React.useState(0);
+  const [useremail,setuseremail]=React.useState("");
+  const [usermob,setusermob]=React.useState("");
+  const [ambno,setambno]=React.useState("");
+  const [city,setCity]=React.userState("");
+  const [address,setadress]=React.useState("");
+  const [pincode,setpincode]=React.useState("");
+  const [password,setpassoword]=React.useState("");
+  const [confirmpass,setconfirm]=React.useState("");
   
+
 
   Axios.defaults.withCredentials = true;
   function resetPass() {}
