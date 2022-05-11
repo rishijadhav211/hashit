@@ -29,11 +29,11 @@ const secretAccessKey = process.env.AWS_SECRET_KEY;
 /**********  REQUIRE STATEMENTS  *********/
 
 const Ambulance = require("./models/ambulance");
-const Admin = require("./models/Admin");
+const Admin = require("./models/adminSchema");
 const Booking = require("./models/booking");
 const Patient = require("./models/patient");
-const auth = require("./MiddleWare/adminAuth");
-const ambAuth = require("./MiddleWare/ambAuth");
+const adminAuth = require("./MiddleWare/adminAuth");
+const ambulanceAuth = require("./MiddleWare/ambAuth");
 
 /***********  GOOGLE API FOR EMAIL  ***********/
 
@@ -139,7 +139,7 @@ app.post("/adminLogin",async(req,res)=>{
 
       if(isMatch) {
           const token = await userLogin.generateAuthToken();
-          res.cookie("AdminCookie", token, {
+          res.cookie("adminLogin", token, {
             expires: new Date(Date.now() + 51840000),
             httpOnly: true,
           });
@@ -237,7 +237,7 @@ app.patch("/fPassAdmin", async (req, res) => {
   }
 });
 
-app.patch("/changePAdmin", auth, async (req, res) => {
+app.patch("/changePAdmin", async (req, res) => {
   try {
     const user = await Admin.findOne({ _id: req.userID });
     const email = user.email;
@@ -321,7 +321,7 @@ app.patch("/fPassAmbulance", async (req, res) => {
   }
 });
 
-app.patch("/changePAmbulnace", auth, async (req, res) => {
+app.patch("/changePAmbulnace", async (req, res) => {
   try {
     const user = await Ambulance.findOne({ _id: req.userID });
     const email = user.email;
@@ -352,9 +352,13 @@ app.patch("/changePAmbulnace", auth, async (req, res) => {
 app.get("/adminAmb",async(req,res)=>{
   const adminID = req.userID;
   try{
+    console.log("HIIIIIIIIIIIIIIIIIIIIIII");
     const admin = Admin.findOne({_id: adminID});
     const pinCode = admin.pinCode;
-    const ambulance = Ambulance.find({isValid: false, pinCode: pinCode});
+    const ambulance = Ambulance.find({});
+
+    console.log("HIIIIIIIIIIIIIIIIIIIIIII");
+
     res.send(ambulance);
   }
   catch(err){
@@ -445,7 +449,7 @@ app.patch("/updateAdmin",async(req,res)=>{
 });
 
 /********  AMBULANCE FUNCTIONALITY  *********/
-app.get("/ambulanceProfile" ,ambAuth,async(req,res)=>{
+app.get("/ambulanceProfile" ,async(req,res)=>{
   const ambID = req.userID;
   try{
     const profile = await Ambulance.findOne({_id: ambID});
@@ -460,7 +464,7 @@ app.get("/ambulanceProfile" ,ambAuth,async(req,res)=>{
   }
 });
 
-app.patch("/updateAmbulance",ambAuth,async(req,res)=>{
+app.patch("/updateAmbulance",async(req,res)=>{
   const id= req.userID;
   const {name,email,pinCode,rate,mobileNo,ambNo,address,city} = req.body;
   try{
@@ -499,7 +503,7 @@ app.get("/getAmbulance",async(req,res)=>{
     res.send(ambulance);
   }
   catch(err){
-    console.log(err);
+    console.log("506"+err);
   }
 });
 
