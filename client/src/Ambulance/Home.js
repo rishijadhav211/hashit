@@ -31,7 +31,7 @@ function Home() {
         </Container>
       </Navbar>
 
-      {
+      {/* {
         amb.map(amb => (
           <div className="row">
             <div className="column">
@@ -49,7 +49,7 @@ function Home() {
             </div>
           </div>
         ))
-      }
+      } */}
 
 
 
