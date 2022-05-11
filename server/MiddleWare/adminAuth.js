@@ -3,7 +3,7 @@ require("cookie-parser");
 
 const UserAuth = async (req, res, next) => {
   try {
-    const token = req.cookies.Admin;
+    const token = req.cookies.AdminCookie;
     const verify = jwt.verify(token, process.env.TOKEN_CODE);
     const rootUser = Admin.findOne({ email: verify.email, token: token });
     if (!rootUser) {

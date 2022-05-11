@@ -46,8 +46,9 @@ const ses = new AWS.SES({region: process.env.AWS_REGION});
 
 app.post("/registerAmb",async(req,res)=>{
   try{
-    const {name,email,rate, mobileNo, ambNo, address, city, pinCode, status, password} = req.body;
+    const {name,email,rate, mobileNo, ambNo, address, city, pinCode, password} = req.body;
     const isValid= false;
+    const status=true;
     const userExist = await Ambulance.findOne({ email: email });
     if (userExist) {
       return res.status(422).json({ error: "User alredy exist" });
@@ -128,7 +129,7 @@ app.post("/adminLogin",async(req,res)=>{
 
       if(isMatch) {
           const token = await userLogin.generateAuthToken();
-          res.cookie("Admin", token, {
+          res.cookie("AdminCookie", token, {
             expires: new Date(Date.now() + 51840000),
             httpOnly: true,
           });
@@ -159,8 +160,8 @@ app.get("/ambulanceLogout",async(req,res)=>{
 
 app.get("/adminLogout",async(req,res)=>{
   try{
-    res.cookie("Admin", "", { expires: new Date(1)});
-    res.clearCookie("Admin");
+    res.cookie("AdminCookie", "", { expires: new Date(1)});
+    res.clearCookie("AdminCookie");
     return res.status(201).json({ message: "Success" });
   }
   catch(err){
