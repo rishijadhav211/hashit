@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const Ambulance = require("../models/ambulance");
 require("cookie-parser");
 
 const UserAuth = async (req, res, next) => {
   try {
-    const token = req.cookies.ASSETREGISTRY;
+    const token = req.cookies.Ambulance;
     const verify = jwt.verify(token, process.env.TOKEN_CODE);
-    const rootUser = User.findOne({ email: verify.email, token: token });
+    const rootUser = Ambulance.findOne({ email: verify.email, token: token });
     if (!rootUser) {
       throw new Error("User not found");
     } else {
