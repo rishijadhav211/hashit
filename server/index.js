@@ -394,7 +394,8 @@ app.patch("/verifyAmb",async(req,res)=>{
   }
 });
 
-app.delete("/rejectAmb",async(req,res)=>{
+app.post("/rejectAmb",async(req,res)=>{
+
   const ambID = req.body.ambID;
   try{
     const amb = await Ambulance.find({_id:ambID});
@@ -529,7 +530,7 @@ app.patch("/updateAmbulance",async(req,res)=>{
 app.post("/getAmbulance",async(req,res)=>{
   const pinCode = req.body.pinCode;
   try{
-    const ambulance = await Ambulance.find({pinCode: pinCode});
+    const ambulance = await Ambulance.find({pinCode: pinCode, isValid:true});
     res.send(ambulance);
   }
   catch(err){
