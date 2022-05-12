@@ -22,12 +22,10 @@ function NewRegistered() {
 
         Axios.get("http://localhost:3002/adminAmb")
         .then(function (response) {
-          if (response.status == 201) {
+          
             console.log(response.data);
-            //set data
-          } else {
-            console.log("error fetching user info");
-          }
+            setregisterAmb(response.data);
+          
         })
         .catch(function (error) {
           console.log(error);
@@ -58,13 +56,15 @@ function NewRegistered() {
 
    }
 
-   function handleShowfordecline(currentindex,ID,ambno){
-    Axios.delete("http://localhost:3002/rejectAmb", {
-        ambID: ID
+   function handleShowfordecline(currentindex,ID,amb){
+
+    console.log("========================",ID);
+    Axios.post("http://localhost:3002/rejectAmb", {
+        ambID:ID
     }).then((response) => {
         console.log(response);
           setShowdelete(true);
-          setcurrentdelamb(ambno);
+          setcurrentdelamb(amb);
           const copyPostArray = Object.assign([],registerAmb );
           copyPostArray.splice(currentindex, 1);
           setregisterAmb(copyPostArray);
@@ -129,7 +129,7 @@ function NewRegistered() {
                     <Col>
                       <Button
                         variant="danger"
-                         onClick={() => handleShowfordecline(index, item.ambID,item.ambNo)}
+                         onClick={() => handleShowfordecline(index, item._id,item.ambNo)}
                       >
                         Decline
                       </Button>

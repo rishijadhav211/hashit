@@ -348,7 +348,6 @@ app.patch("/changePAmbulnace", async (req, res) => {
 });
 
 /**********  ADMIN FUNCTIONALITY  *********/
-
 app.get("/verifiedAmbulance",async(req,res)=>{
   try{
     const amb = await Ambulance.find({isValid:true});
@@ -359,11 +358,11 @@ app.get("/verifiedAmbulance",async(req,res)=>{
   }
 });
 
-app.get("/adminAmb",adminAuth,async(req,res)=>{
+app.get("/adminAmb",async(req,res)=>{
   const adminID = req.userID;
   try{
     const admin = Admin.findOne({_id: adminID});
-    // const pinCode = admin.pinCode;
+    const pinCode = admin.pinCode;
     const ambulance = await Ambulance.find({isValid:false});
     res.send(ambulance);
   }
@@ -396,6 +395,7 @@ app.patch("/verifyAmb",async(req,res)=>{
 
 app.post("/rejectAmb",async(req,res)=>{
 
+  console.log(req.body)
   const ambID = req.body.ambID;
   try{
     const amb = await Ambulance.find({_id:ambID});
@@ -528,6 +528,7 @@ app.patch("/updateAmbulance",async(req,res)=>{
 /******* PATIENT FUNCTIONAILTY *******/
 
 app.post("/getAmbulance",async(req,res)=>{
+  console.log("in getaam"+ req.body);
   const pinCode = req.body.pinCode;
   try{
     const ambulance = await Ambulance.find({pinCode: pinCode, isValid:true});
