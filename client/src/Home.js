@@ -1,10 +1,8 @@
 import React from "react";
 import { useState } from "react";
-import Axios from "axios";
-import { Redirect, useHistory } from "react-router-dom";
 import axios from 'axios';
 import { NavDropdown, Button } from 'react-bootstrap';
-import {  withRouter } from "react-router-dom";
+import { useHistory, withRouter } from "react-router-dom";
 import { useEffect } from 'react';
 
 import {
@@ -19,109 +17,81 @@ import {
   Nav,
 } from "react-bootstrap";
 
-
 function Home() {
   const [text, settext] = useState("");
   const [Resmsg, setResmsg] = React.useState(null);
   const [validated, setValidated] = React.useState(false);
   const [key, setKey] = React.useState("Search");
   const [mailplaceholder, setmailplaceholder] = useState("Password");
-  const [email,setEmail]= React.useState("");
-  const [pass,setPass]=React.useState("");
-  const [redirect,setRedirect]=React.useState(false);
-  const [amb, setamb] = React.useState([]);
-  const[pincode, setPinCode] = React.useState("");
 
-
-  const [uname,setuname]=React.useState("");
-  const [rate,setRate]=React.useState(0);
-  const [useremail,setuseremail]=React.useState("");
-  const [usermob,setusermob]=React.useState("");
-  const [ambno,setambno]=React.useState("");
-  const [city,setCity]=React.useState("");
-  const [address,setadress]=React.useState("");
-  const [userpincode,setuserpincode]=React.useState("");
-  const [password,setpassoword]=React.useState("");
-  const [confirmpass,setconfirm]=React.useState("");
-  
-  Axios.defaults.withCredentials = true;
-  function resetPass() {}
+  function resetPass() { }
   function resetform() {
     setResmsg(null);
     setValidated(false);
     document.getElementById("addassetform").reset();
   }
-  const history=useHistory();
-  
-  if (redirect) {
-    return <Redirect to='/admin'></Redirect>
-  }
-
-  
-  function handleLogin(e) {
-   
-    console.log("clicked")
-    settext(null);
-   e.preventDefault(e);
-    if (email && pass) {
-
-      
-      Axios.post("http://localhost:3002/adminLogin", {
-        email: email,
-        password: pass,
-        withCredentials: true,
-      }).then((response) => {
-        console.log(response);
-        if (response.status === 201) {
-          setRedirect(true);
-        } else if (response.status === 231) {
-          settext(response);
-        }
-      });
-    } else if (email) {
-      settext("Enter Password! ");
-    } 
-
-  }
-
-
-
+  function handleLogin(e) { }
   async function handleSubmit(event) { }
 
-  
 
-  console.log(pincode);
+  const [amb, setamb] = useState([]);
+  const [data, setData] = useState({
+    pincode: ""
+  });
 
+
+// console.log(pincode)
 
   function handle(e) {
-    const newdata = { ...pincode };
+    const newdata = { ...data };
     newdata[e.target.id] = e.target.value;
-    setPinCode(newdata);
+    setData(newdata);
     // console.log(newdata);
-}
+  }
 
-const searchAmbulance = (e) => {
 
-  e.preventDefault();
+  const searchAmbulance = (e) => {
 
-  console.log("in search")
+    e.preventDefault();
 
-  axios.get("http://localhost:3002/getAmbulance", {
-      pinCode: pincode,
-     
-  })
-      .then(res => {
-          if (res.status === 200) {
-              window.alert("Form set Successfully!!")
-              setPinCode(res.data);
-          }
+    console.log("pin"+data.pincode)
+
+    axios.post("http://localhost:3002/getAmbulance", {
+      pinCode: data.pincode,
+
+    }).then(res => {
+        if (res.status === 200) {
+          console.log(res.data);
+          setamb(res.data);
+        }
       })
       .catch(error => {
-          console.log(error);
-          window.alert("Theres Some Error")
+        console.log(error);
+        window.alert("Theres Some Error")
       })
-}
+  }
 
+  function Renderamb(am){
+    return(
+    am.map(amb => (
+      <div className="row">
+        <div className="column">
+          <div className="mard">
+            <div>
+              <Card.Body>
+                <Card.Title>Ambulance No: {amb.ambNo}</Card.Title>
+                <Card.Subtitle>Provider Name:{amb.name}  </Card.Subtitle>
+                <Card.Text>Current Location:{amb.address}  </Card.Text>
+           
+                <Button  className="formFieldButton hanldeForm">Book</Button>
+
+              </Card.Body>
+            </div>
+          </div>
+        </div>
+      </div>
+    )))
+  }
 
 
   return (
@@ -142,32 +112,58 @@ const searchAmbulance = (e) => {
             <Form>
               <Row>
                 <Col>
-                  <Form.Control style ={{"width" : "500px"}} id="pincode" onChange={(e) => handle(e)} name="name" placeholder="Enter Pin Code" />
+                  {/* <Form.Control style={{ "width": "500px" }} id="pincode" onChange={(e) => handle(e)} name="name" placeholder="Enter Pin Code" /> */}
+
+                  <div className="formField">
+                    <label className="formFieldLabel" htmlFor="email">
+                      Enter Pin Code
+                    </label>
+                    <input
+                      type="number"
+                      id="pincode"
+                      className="formFieldInput"
+                      placeholder="Enter Pincode"
+                      name="pincode"
+                      required
+                      value={data.pincode}
+                      onChange={(e) => handle(e)}
+                    />
+                  </div>
                 </Col>
                 <Col>
-                <Button style={{"marginLeft": "-200px"}}  onClick={(e) => searchAmbulance(e)} className="formFieldButton hanldeForm">Search Ambulances</Button>
+                  <Button style={{ "marginLeft": "-200px" }} onClick={(e) => searchAmbulance(e)} className="formFieldButton hanldeForm">Search Ambulances</Button>
 
                 </Col>
               </Row>
             </Form>
-            {amb.map(amb => (
-           <div className="row">
-             <div className="column">
-               <div className="mard">
-                 <div>
-                   <Card.Body>
-                     <Card.Title>Ambulance No: </Card.Title>
-                     <Card.Subtitle className="">:  </Card.Subtitle>
-                     <Card.Text>Source:  </Card.Text>
-                     <Card.Text>Destination: </Card.Text>
+            {/* {amb.map(amb => (
+              <div className="row">
+                <div className="column">
+                  <div className="mard">
+                    <div>
+                      <Card.Body>
+                        <Card.Title>Ambulance No: {amb.ambNo}</Card.Title>
+                        <Card.Subtitle>Provider Name:{amb.name}  </Card.Subtitle>
+                        <Card.Text>Current Location:{amb.address}  </Card.Text>
+                   
+                        <Button  onClick={(e) => searchAmbulance(e)} className="formFieldButton hanldeForm">Book Ambulance</Button>
 
-                 </Card.Body>
-               </div>
-             </div>
-           </div>
-         </div>
-       ))}
-           
+                      </Card.Body>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))} */}
+            
+            <Container style={{"marginLeft": "-300px"}}>
+                <Row md={3}>{Renderamb(amb)}</Row>
+            </Container>
+            {/* <Row className="justify-content-md-center">
+                  <p style={{ color: "red", textAlign: "center" }}>
+                    {lefttabtext}
+                  </p>
+            </Row> */}
+
           </Tab>
           <Tab eventKey="Search" title=" Register Ambulance">
             <Row style={{ margin: 0, padding: 0 }}>
@@ -389,7 +385,7 @@ const searchAmbulance = (e) => {
                 <input
                   spellCheck={false}
                   type="email"
-                  onChange={(e) => setEmail(e.target.value)}
+                  // onChange={(e) => setEmail(e.target.value)}
                   className="email"
                   placeholder="Email"
                 />
@@ -397,7 +393,7 @@ const searchAmbulance = (e) => {
                 <input
                   type="password"
                   className="password"
-                  onChange={(e) => setPass(e.target.value)}
+                  // onChange={(e) => setPass(e.target.value)}
                   placeholder={mailplaceholder}
                 />
                 <br />
