@@ -44,8 +44,6 @@ function Home() {
   const [password,setpassoword]=React.useState("");
   const [confirmpass,setconfirm]=React.useState("");
   
-
-
   Axios.defaults.withCredentials = true;
   function resetPass() {}
   function resetform() {
