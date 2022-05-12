@@ -349,11 +349,21 @@ app.patch("/changePAmbulnace", async (req, res) => {
 
 /**********  ADMIN FUNCTIONALITY  *********/
 
+app.get("/verifiedAmbulance",async(req,res)=>{
+  try{
+    const amb = await Ambulance.find({isValid:true});
+    res.send(amb);
+  }
+  catch(err){
+    console.log(err);
+  }
+});
+
 app.get("/adminAmb",adminAuth,async(req,res)=>{
   const adminID = req.userID;
   try{
     const admin = Admin.findOne({_id: adminID});
-    const pinCode = admin.pinCode;
+    // const pinCode = admin.pinCode;
     const ambulance = await Ambulance.find({isValid:false});
     res.send(ambulance);
   }
@@ -387,10 +397,34 @@ app.patch("/verifyAmb",async(req,res)=>{
 app.delete("/rejectAmb",async(req,res)=>{
   const ambID = req.body.ambID;
   try{
+    const amb = await Ambulance.find({_id:ambID});
+    const email = amb.email; 
     const del = await Ambulance.findOneAndDelete({_id: ambID});
     
-    //email to ambulance wala
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "placementapp1234@gmail.com",
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+    const mailOptions = {
+      from: "Ambulance Aggregator @ SAHAJ HACKATHON",
+      to: email,
+      subject: "PASSWORD CHANGED SUCCESSFULLY\n",
+      text: "Your New Password is:"+OTP ,
+    };
+    const result = await transport.sendMail(mailOptions);
+    if (result) {
+      return res.status(201).json({ message: "Mail Sent Success" });
+    } else {
+      return res.status(500).json({ message: "Falied to send" });
+    }
 
     if(del){
       res.status(201).json({ message: "Deleted success" });
