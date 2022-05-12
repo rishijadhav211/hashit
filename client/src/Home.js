@@ -71,6 +71,27 @@ function Home() {
       })
   }
 
+  function Renderamb(am){
+    return(
+    am.map(amb => (
+      <div className="row">
+        <div className="column">
+          <div className="mard">
+            <div>
+              <Card.Body>
+                <Card.Title>Ambulance No: {amb.ambNo}</Card.Title>
+                <Card.Subtitle>Provider Name:{amb.name}  </Card.Subtitle>
+                <Card.Text>Current Location:{amb.address}  </Card.Text>
+           
+                <Button  className="formFieldButton hanldeForm">Book</Button>
+
+              </Card.Body>
+            </div>
+          </div>
+        </div>
+      </div>
+    )))
+  }
 
 
   return (
@@ -115,7 +136,7 @@ function Home() {
                 </Col>
               </Row>
             </Form>
-            {amb.map(amb => (
+            {/* {amb.map(amb => (
               <div className="row">
                 <div className="column">
                   <div className="mard">
@@ -124,14 +145,24 @@ function Home() {
                         <Card.Title>Ambulance No: {amb.ambNo}</Card.Title>
                         <Card.Subtitle>Provider Name:{amb.name}  </Card.Subtitle>
                         <Card.Text>Current Location:{amb.address}  </Card.Text>
-                        {/* <Card.Text>Destination: </Card.Text> */}
+                   
+                        <Button  onClick={(e) => searchAmbulance(e)} className="formFieldButton hanldeForm">Book Ambulance</Button>
 
                       </Card.Body>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
+            ))} */}
+            
+            <Container style={{"marginLeft": "-300px"}}>
+                <Row md={3}>{Renderamb(amb)}</Row>
+            </Container>
+            {/* <Row className="justify-content-md-center">
+                  <p style={{ color: "red", textAlign: "center" }}>
+                    {lefttabtext}
+                  </p>
+            </Row> */}
 
           </Tab>
           <Tab eventKey="Search" title=" Register Ambulance">

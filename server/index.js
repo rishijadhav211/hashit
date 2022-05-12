@@ -354,7 +354,7 @@ app.get("/adminAmb",adminAuth,async(req,res)=>{
   try{
     const admin = Admin.findOne({_id: adminID});
     const pinCode = admin.pinCode;
-    const ambulance = await Ambulance.find({isValid:false, pinCode:pinCode});
+    const ambulance = await Ambulance.find({isValid:false});
     res.send(ambulance);
   }
   catch(err){
@@ -376,7 +376,7 @@ app.patch("/verifyAmb",async(req,res)=>{
     if (success) {
       res.status(201).json({ message: "Verified Success" });
     } else {
-      return res.status(400).json({ message: "Data not fo   und" });
+      return res.status(400).json({ message: "Data not found" });
     }
   }
   catch(err){
@@ -517,13 +517,36 @@ app.post("/request",async(req,res)=>{
     var mobileNo= ambulance.mobileNo;
     var ambNo = ambulance.ambNo;
 
-    var message ={
-      ambName: ambName,
-      mobileNo: mobileNo,
-      ambNo : ambNo,
+    // var message ={
+    //   ambName: ambName,
+    //   mobileNo: mobileNo,
+    //   ambNo : ambNo,
+    // };
+    
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "placementapp1234@gmail.com",
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+    const mailOptions = {
+      from: "Ambulance Aggregator @ SAHAJ HACKATHON",
+      to: email,
+      subject: "Ambulance arriving soon\n",
+      text: "Ambulance Name:"+ambName +"\nContact Details:"+mobileNo+"\nAmbulance Number:"+ambNo,
     };
-    //      AMAZON SNS
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    const result = await transport.sendMail(mailOptions);
+    if (result) {
+      return res.status(201).json({ message: "Mail Sent Success" });
+    } else {
+      return res.status(500).json({ message: "Falied to send" });
+    }
 
     if (success) {
       res.status(201).json({ message: "Booked successfully" });

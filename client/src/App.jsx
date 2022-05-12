@@ -1,6 +1,8 @@
 import React from "react";
 import Home from "./Home";
 import Admin from "./Admin/Home";
+import Ambulance from "./Ambulance/Home";
+import newRegistered from "./Admin/NewRegistered";
 import Dash from "./Ambulance/Dash";
 import {BrowserRouter as Router, Route, Switch, NavLink } from 'react-router-dom';
 
