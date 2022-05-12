@@ -13,7 +13,7 @@ import {
 import Axios from "axios";
 function NewRegistered() {
     const [lefttabtext, setLefttabtext] = React.useState("");
-    const [registerAmb,setregisterAmb]= React.useState([1,2,3,3]);
+    const [registerAmb,setregisterAmb]= React.useState([]);
     const [showdelete,setShowdelete]=React.useState(false);
     const [currentdelamb,setcurrentdelamb]=React.useState("");
     const [showverified,setshowverified]=React.useState(false);

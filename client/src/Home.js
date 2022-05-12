@@ -1,9 +1,11 @@
 import React from "react";
 import { useState } from "react";
+import Axios from 'axios';
 import axios from 'axios';
 import { NavDropdown, Button } from 'react-bootstrap';
 import { useHistory, withRouter } from "react-router-dom";
 import { useEffect } from 'react';
+import { Redirect } from "react-router-dom";
 
 import {
   Form,
@@ -22,22 +24,62 @@ function Home() {
   const [Resmsg, setResmsg] = React.useState(null);
   const [validated, setValidated] = React.useState(false);
   const [key, setKey] = React.useState("Search");
+  const [email,setEmail]= React.useState("");
+  const [pass,setPass]=React.useState("");
+  const [redirect,setRedirect]=React.useState(false);
   const [mailplaceholder, setmailplaceholder] = useState("Password");
 
-  function resetPass() { }
+
+
+  const [uname,setuname]=React.useState("");
+  const [rate,setRate]=React.useState(0);
+  const [amb, setamb] = useState([]);
+  const [data, setData] = useState({
+    pincode: ""
+  });
+  Axios.defaults.withCredentials = true;
+
+  function resetPass() {}
   function resetform() {
     setResmsg(null);
     setValidated(false);
     document.getElementById("addassetform").reset();
   }
-  function handleLogin(e) { }
+  function handleLogin(e) {}
+  const history=useHistory();
+
+  if (redirect) {
+    return <Redirect to='/admin'></Redirect>
+  }
+  function handleLogin(e) {
+
+    console.log("clicked")
+    settext(null);
+   e.preventDefault(e);
+    if (email && pass) {
+
+
+      Axios.post("http://localhost:3002/adminLogin", {
+        email: email,
+        password: pass,
+        withCredentials: true,
+      }).then((response) => {
+        console.log(response);
+        if (response.status === 201) {
+          setRedirect(true);
+        } else if (response.status === 231) {
+          settext(response);
+        }
+      });
+    } else if (email) {
+      settext("Enter Password! ");
+    } 
+
+  }
   async function handleSubmit(event) { }
 
 
-  const [amb, setamb] = useState([]);
-  const [data, setData] = useState({
-    pincode: ""
-  });
+  
 
 
 // console.log(pincode)
@@ -385,7 +427,7 @@ function Home() {
                 <input
                   spellCheck={false}
                   type="email"
-                  // onChange={(e) => setEmail(e.target.value)}
+                   onChange={(e) => setEmail(e.target.value)}
                   className="email"
                   placeholder="Email"
                 />
@@ -393,7 +435,7 @@ function Home() {
                 <input
                   type="password"
                   className="password"
-                  // onChange={(e) => setPass(e.target.value)}
+                   onChange={(e) => setPass(e.target.value)}
                   placeholder={mailplaceholder}
                 />
                 <br />
