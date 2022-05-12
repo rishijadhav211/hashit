@@ -354,7 +354,7 @@ app.get("/adminAmb",adminAuth,async(req,res)=>{
   try{
     const admin = Admin.findOne({_id: adminID});
     const pinCode = admin.pinCode;
-    const ambulance = await Ambulance.find();
+    const ambulance = await Ambulance.find({isValid:false});
     res.send(ambulance);
   }
   catch(err){
