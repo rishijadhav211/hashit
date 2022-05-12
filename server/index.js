@@ -359,10 +359,10 @@ app.get("/verifiedAmbulance",async(req,res)=>{
 });
 
 app.get("/adminAmb",async(req,res)=>{
-  // const adminID = req.userID;
+  const adminID = req.userID;
   try{
-    // const admin = Admin.findOne({_id: adminID});
-    // const pinCode = admin.pinCode;
+    const admin = Admin.findOne({_id: adminID});
+    const pinCode = admin.pinCode;
     const ambulance = await Ambulance.find({isValid:false});
     res.send(ambulance);
   }
@@ -394,6 +394,7 @@ app.patch("/verifyAmb",async(req,res)=>{
 });
 
 app.post("/rejectAmb",async(req,res)=>{
+
   console.log(req.body)
   const ambID = req.body.ambID;
   try{
@@ -530,7 +531,7 @@ app.post("/getAmbulance",async(req,res)=>{
   console.log("in getaam"+ req.body);
   const pinCode = req.body.pinCode;
   try{
-    const ambulance = await Ambulance.find({pinCode: pinCode});
+    const ambulance = await Ambulance.find({pinCode: pinCode, isValid:true});
     res.send(ambulance);
   }
   catch(err){
@@ -539,8 +540,8 @@ app.post("/getAmbulance",async(req,res)=>{
 });
 
 app.post("/request",async(req,res)=>{
-  const {name, location,number }=req.body;
-  const ambID = req.ambID;
+  const {name, location,number}=req.body;
+  const ambID = req.body.ambID;
   const status = true;
   try{ 
     const book = new Booking({name, location, ambID,status,number});
@@ -556,31 +557,6 @@ app.post("/request",async(req,res)=>{
     //   mobileNo: mobileNo,
     //   ambNo : ambNo,
     // };
-    
-    const accessToken = await oAuth2Client.getAccessToken();
-    const transport = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: "placementapp1234@gmail.com",
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN,
-        accessToken: accessToken,
-      },
-    });
-    const mailOptions = {
-      from: "Ambulance Aggregator @ SAHAJ HACKATHON",
-      to: email,
-      subject: "Ambulance arriving soon\n",
-      text: "Ambulance Name:"+ambName +"\nContact Details:"+mobileNo+"\nAmbulance Number:"+ambNo,
-    };
-    const result = await transport.sendMail(mailOptions);
-    if (result) {
-      return res.status(201).json({ message: "Mail Sent Success" });
-    } else {
-      return res.status(500).json({ message: "Falied to send" });
-    }
 
     if (success) {
       res.status(201).json({ message: "Booked successfully" });
