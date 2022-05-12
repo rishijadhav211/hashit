@@ -33,40 +33,43 @@ function Home() {
   function handleLogin(e) { }
   async function handleSubmit(event) { }
 
+
   const [amb, setamb] = useState([]);
-  const[pincode, setPinCode] = useState("");
+  const [data, setData] = useState({
+    pincode: ""
+  });
 
-  console.log(pincode);
 
+// console.log(pincode)
 
   function handle(e) {
-    const newdata = { ...pincode };
+    const newdata = { ...data };
     newdata[e.target.id] = e.target.value;
-    setPinCode(newdata);
+    setData(newdata);
     // console.log(newdata);
-}
+  }
 
-const searchAmbulance = (e) => {
 
-  e.preventDefault();
+  const searchAmbulance = (e) => {
 
-  console.log("in search")
+    e.preventDefault();
 
-  axios.get("http://localhost:3002/getAmbulance", {
-      pinCode: pincode,
-     
-  })
-      .then(res => {
-          if (res.status === 200) {
-              window.alert("Form set Successfully!!")
-              setPinCode(res.data);
-          }
+    console.log("pin"+data.pincode)
+
+    axios.post("http://localhost:3002/getAmbulance", {
+      pinCode: data.pincode,
+
+    }).then(res => {
+        if (res.status === 200) {
+          console.log(res.data);
+          setamb(res.data);
+        }
       })
       .catch(error => {
-          console.log(error);
-          window.alert("Theres Some Error")
+        console.log(error);
+        window.alert("Theres Some Error")
       })
-}
+  }
 
 
 
@@ -88,32 +91,48 @@ const searchAmbulance = (e) => {
             <Form>
               <Row>
                 <Col>
-                  <Form.Control style ={{"width" : "500px"}} id="pincode" onChange={(e) => handle(e)} name="name" placeholder="Enter Pin Code" />
+                  {/* <Form.Control style={{ "width": "500px" }} id="pincode" onChange={(e) => handle(e)} name="name" placeholder="Enter Pin Code" /> */}
+
+                  <div className="formField">
+                    <label className="formFieldLabel" htmlFor="email">
+                      Enter Pin Code
+                    </label>
+                    <input
+                      type="number"
+                      id="pincode"
+                      className="formFieldInput"
+                      placeholder="Enter Pincode"
+                      name="pincode"
+                      required
+                      value={data.pincode}
+                      onChange={(e) => handle(e)}
+                    />
+                  </div>
                 </Col>
                 <Col>
-                <Button style={{"marginLeft": "-200px"}}  onClick={(e) => searchAmbulance(e)} className="formFieldButton hanldeForm">Search Ambulances</Button>
+                  <Button style={{ "marginLeft": "-200px" }} onClick={(e) => searchAmbulance(e)} className="formFieldButton hanldeForm">Search Ambulances</Button>
 
                 </Col>
               </Row>
             </Form>
             {amb.map(amb => (
-           <div className="row">
-             <div className="column">
-               <div className="mard">
-                 <div>
-                   <Card.Body>
-                     <Card.Title>Ambulance No: </Card.Title>
-                     <Card.Subtitle className="">:  </Card.Subtitle>
-                     <Card.Text>Source:  </Card.Text>
-                     <Card.Text>Destination: </Card.Text>
+              <div className="row">
+                <div className="column">
+                  <div className="mard">
+                    <div>
+                      <Card.Body>
+                        <Card.Title>Ambulance No: {amb.ambNo}</Card.Title>
+                        <Card.Subtitle>Provider Name:{amb.name}  </Card.Subtitle>
+                        <Card.Text>Current Location:{amb.address}  </Card.Text>
+                        {/* <Card.Text>Destination: </Card.Text> */}
 
-                 </Card.Body>
-               </div>
-             </div>
-           </div>
-         </div>
-       ))}
-           
+                      </Card.Body>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
           </Tab>
           <Tab eventKey="Search" title=" Register Ambulance">
             <Row style={{ margin: 0, padding: 0 }}>

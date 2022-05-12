@@ -492,7 +492,8 @@ app.patch("/updateAmbulance",async(req,res)=>{
 
 /******* PATIENT FUNCTIONAILTY *******/
 
-app.get("/getAmbulance",async(req,res)=>{
+app.post("/getAmbulance",async(req,res)=>{
+  console.log("in getaam"+ req.body);
   const pinCode = req.body.pinCode;
   try{
     const ambulance = await Ambulance.find({pinCode: pinCode});
