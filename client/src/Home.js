@@ -58,6 +58,8 @@ function Home() {
   if (redirect) {
     return <Redirect to='/admin'></Redirect>
   }
+
+  
   function handleLogin(e) {
    
     console.log("clicked")
@@ -85,8 +87,7 @@ function Home() {
   }
 
 
-  async function handleSubmit(event) {}
-  function handleLogin(e) { }
+
   async function handleSubmit(event) { }
 
   
