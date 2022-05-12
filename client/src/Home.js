@@ -1,8 +1,10 @@
 import React from "react";
 import { useState } from "react";
+import Axios from "axios";
+import { Redirect, useHistory } from "react-router-dom";
 import axios from 'axios';
 import { NavDropdown, Button } from 'react-bootstrap';
-import { useHistory, withRouter } from "react-router-dom";
+import {  withRouter } from "react-router-dom";
 import { useEffect } from 'react';
 
 import {
@@ -17,44 +19,110 @@ import {
   Nav,
 } from "react-bootstrap";
 
+
 function Home() {
   const [text, settext] = useState("");
   const [Resmsg, setResmsg] = React.useState(null);
   const [validated, setValidated] = React.useState(false);
   const [key, setKey] = React.useState("Search");
   const [mailplaceholder, setmailplaceholder] = useState("Password");
+  const [email,setEmail]= React.useState("");
+  const [pass,setPass]=React.useState("");
+  const [redirect,setRedirect]=React.useState(false);
+  const [amb, setamb] = React.useState([]);
+  const[pincode, setPinCode] = React.useState("");
 
-  function resetPass() { }
+
+  const [uname,setuname]=React.useState("");
+  const [rate,setRate]=React.useState(0);
+  const [useremail,setuseremail]=React.useState("");
+  const [usermob,setusermob]=React.useState("");
+  const [ambno,setambno]=React.useState("");
+  const [city,setCity]=React.useState("");
+  const [address,setadress]=React.useState("");
+  const [userpincode,setuserpincode]=React.useState("");
+  const [password,setpassoword]=React.useState("");
+  const [confirmpass,setconfirm]=React.useState("");
+  
+  Axios.defaults.withCredentials = true;
+  function resetPass() {}
   function resetform() {
     setResmsg(null);
     setValidated(false);
     document.getElementById("addassetform").reset();
   }
-  function handleLogin(e) { }
+  const history=useHistory();
+  
+  if (redirect) {
+    return <Redirect to='/admin'></Redirect>
+  }
+
+  
+  function handleLogin(e) {
+   
+    console.log("clicked")
+    settext(null);
+   e.preventDefault(e);
+    if (email && pass) {
+
+      
+      Axios.post("http://localhost:3002/adminLogin", {
+        email: email,
+        password: pass,
+        withCredentials: true,
+      }).then((response) => {
+        console.log(response);
+        if (response.status === 201) {
+          setRedirect(true);
+        } else if (response.status === 231) {
+          settext(response);
+        }
+      });
+    } else if (email) {
+      settext("Enter Password! ");
+    } 
+
+  }
+
+
+
   async function handleSubmit(event) { }
 
-  const [amb, setamb] = useState([]);
-  const[pincode, setPinCode] = useState("");
+  
 
   console.log(pincode);
 
-  useEffect(() => {
-    axios.get("http://localhost:3001/api/users/login/notify",{
-      pinCode: pincode
-    }).then((response) => {
-      console.log(response.data);
-      setamb(response.data.data)
 
-
-
-    });
-  }, [])
   function handle(e) {
     const newdata = { ...pincode };
     newdata[e.target.id] = e.target.value;
     setPinCode(newdata);
     // console.log(newdata);
 }
+
+const searchAmbulance = (e) => {
+
+  e.preventDefault();
+
+  console.log("in search")
+
+  axios.get("http://localhost:3002/getAmbulance", {
+      pinCode: pincode,
+     
+  })
+      .then(res => {
+          if (res.status === 200) {
+              window.alert("Form set Successfully!!")
+              setPinCode(res.data);
+          }
+      })
+      .catch(error => {
+          console.log(error);
+          window.alert("Theres Some Error")
+      })
+}
+
+
 
   return (
     <>
@@ -77,12 +145,12 @@ function Home() {
                   <Form.Control style ={{"width" : "500px"}} id="pincode" onChange={(e) => handle(e)} name="name" placeholder="Enter Pin Code" />
                 </Col>
                 <Col>
-                <Button style={{"marginLeft": "-200px"}} className="formFieldButton hanldeForm">Search Ambulances</Button>
+                <Button style={{"marginLeft": "-200px"}}  onClick={(e) => searchAmbulance(e)} className="formFieldButton hanldeForm">Search Ambulances</Button>
 
                 </Col>
               </Row>
             </Form>
-            {/* {amb.map(amb => (
+            {amb.map(amb => (
            <div className="row">
              <div className="column">
                <div className="mard">
@@ -98,25 +166,8 @@ function Home() {
              </div>
            </div>
          </div>
-       ))} */}
-            <div className="row">
-              <div className="column">
-                <div className="mard">
-                  <div>
-                    <Card.Body>
-                      <Card.Title style={{ "textAlign": "center" }}>Ambulance No: </Card.Title>
-                      <Card.Text style={{ "textAlign": "center" }}>Provider Name:  </Card.Text>
-                      <Card.Text style={{ "textAlign": "center" }}>Current Location:  </Card.Text>
-                      <Card.Text style={{ "textAlign": "center" }}>Phone No: </Card.Text>
-                      {/* <Card.Text style={{"textAlign":"center"}}>Patient Phone No: </Card.Text> */}
-
-                    </Card.Body>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
+       ))}
+           
           </Tab>
           <Tab eventKey="Search" title=" Register Ambulance">
             <Row style={{ margin: 0, padding: 0 }}>
@@ -338,7 +389,7 @@ function Home() {
                 <input
                   spellCheck={false}
                   type="email"
-                  // onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="email"
                   placeholder="Email"
                 />
@@ -346,7 +397,7 @@ function Home() {
                 <input
                   type="password"
                   className="password"
-                  // onChange={(e) => setPass(e.target.value)}
+                  onChange={(e) => setPass(e.target.value)}
                   placeholder={mailplaceholder}
                 />
                 <br />

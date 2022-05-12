@@ -376,7 +376,7 @@ app.patch("/verifyAmb",async(req,res)=>{
     if (success) {
       res.status(201).json({ message: "Verified Success" });
     } else {
-      return res.status(400).json({ message: "Data not fo   und" });
+      return res.status(400).json({ message: "Data not found" });
     }
   }
   catch(err){
